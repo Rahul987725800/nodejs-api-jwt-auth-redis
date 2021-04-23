@@ -1,0 +1,7 @@
+{
+  "name": "nodejs api authentication",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Rahul Gupta <guptarahul70322@gmail.com>",
+  "license": "MIT"
+}
