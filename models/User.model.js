@@ -27,6 +27,9 @@ UserSchema.pre('save', async function (next) {
     next(err);
   }
 });
+UserSchema.methods.isValidPassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
 // UserSchema.post('save', async function (next) {
 //   console.log('called after saving a user');
 // });
