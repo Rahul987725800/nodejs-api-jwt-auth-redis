@@ -3,7 +3,7 @@ const createHttpError = require('http-errors');
 const router = express.Router();
 const User = require('../models/User.model');
 const { authSchema } = require('../helpers/validation_schema');
-const { signAccessToken } = require('../helpers/jwt_helper');
+const { signAccessToken, signRefreshToken } = require('../helpers/jwt_helper');
 router.post('/register', async (req, res, next) => {
   try {
     const result = await authSchema.validateAsync(req.body);
@@ -18,7 +18,8 @@ router.post('/register', async (req, res, next) => {
     const user = new User(result);
     const savedUser = await user.save();
     const accessToken = await signAccessToken(savedUser.id);
-    res.send({ accessToken });
+    const refreshToken = await signRefreshToken(savedUser.id);
+    res.send({ accessToken, refreshToken });
   } catch (err) {
     if (err.isJoi) err.status = 422; //  422 Unprocessable Entity
     next(err);
@@ -34,7 +35,8 @@ router.post('/login', async (req, res, next) => {
       throw createHttpError.Unauthorized('Username/Password not valid');
     // 401 Unauthorized
     const accessToken = await signAccessToken(user.id);
-    res.send({ accessToken });
+    const refreshToken = await signRefreshToken(user.id);
+    res.send({ accessToken, refreshToken });
   } catch (err) {
     if (err.isJoi)
       return next(createHttpError.BadRequest('Invalid Username/Password'));
