@@ -1,12 +1,17 @@
 require('dotenv').config();
 require('./helpers/init_mongodb');
+const redisClient = require('./helpers/init_redis');
 const express = require('express');
 const morgan = require('morgan');
 const createHttpError = require('http-errors');
 const authRoute = require('./routes/auth.route');
 const { verifyAccessToken } = require('./helpers/jwt_helper');
 const app = express();
-
+// redisClient.SET('foo', 'ghanta');
+// redisClient.GET('foo', (err, value) => {
+//   if (err) console.log(err.message);
+//   console.log(value);
+// });
 app.use(morgan('dev'));
 // for json body
 app.use(express.json());
