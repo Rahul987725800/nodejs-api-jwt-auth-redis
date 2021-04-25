@@ -4,6 +4,7 @@ const express = require('express');
 const morgan = require('morgan');
 const createHttpError = require('http-errors');
 const authRoute = require('./routes/auth.route');
+const { verifyAccessToken } = require('./helpers/jwt_helper');
 const app = express();
 
 app.use(morgan('dev'));
@@ -11,8 +12,10 @@ app.use(morgan('dev'));
 app.use(express.json());
 // for form data
 // app.use(express.urlencoded({ extended: true }));
-app.get('/', (req, res, next) => {
-  res.send('Hello');
+app.get('/', verifyAccessToken, (req, res, next) => {
+  // console.log(req.headers['authorization']);
+  // console.log(req.payload); // this attached after jwt verification
+  res.send('Hello from express');
 });
 app.use('/auth', authRoute);
 app.use((req, res, next) => {

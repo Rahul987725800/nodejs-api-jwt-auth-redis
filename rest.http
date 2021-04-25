@@ -1,6 +1,5 @@
 GET http://localhost:4000/
-
-
+Authorization: Bearer eyJhbGciOiIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTkzNTY2NzksImV4cCI6MTYxOTM1NjY5NCwiYXVkIjoiNjA4MmUxOGVlYmM5MGYxNDJjYTI2ZjE4IiwiaXNzIjoic2thcnRuZXIuY29tIn0.iu9UeEFeudaTgAjLmKVTa6b9PFgMRQFpKoBmRo8iP1Y
 ###
 GET http://localhost:4000/posts
 
@@ -10,7 +9,7 @@ Content-Type: application/json
 
 {
   "email": "123@gmail.com",
-  "password": "1"
+  "password": "123456"
 }
 
 
