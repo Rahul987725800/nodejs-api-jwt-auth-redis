@@ -5,7 +5,8 @@
   "author": "Rahul Gupta <guptarahul70322@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "redis-gui": "redis-commander" 
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",

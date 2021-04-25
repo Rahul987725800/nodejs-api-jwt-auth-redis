@@ -1,6 +1,6 @@
 require('dotenv').config();
 require('./helpers/init_mongodb');
-const redisClient = require('./helpers/init_redis');
+// const redisClient = require('./helpers/init_redis');
 const express = require('express');
 const morgan = require('morgan');
 const createHttpError = require('http-errors');

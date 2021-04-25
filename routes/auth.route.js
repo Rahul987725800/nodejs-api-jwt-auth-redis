@@ -3,6 +3,7 @@ const createHttpError = require('http-errors');
 const router = express.Router();
 const User = require('../models/User.model');
 const { authSchema } = require('../helpers/validation_schema');
+const redisClient = require('../helpers/init_redis');
 const {
   signAccessToken,
   signRefreshToken,
@@ -60,7 +61,31 @@ router.post('/refresh-token', async (req, res, next) => {
     next(err);
   }
 });
-router.delete('/logout', (req, res, next) => {
-  res.send('logout');
+router.delete('/logout', async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      throw createHttpError.BadRequest();
+    }
+    const userId = await verifyRefreshToken(refreshToken);
+    redisClient.DEL(userId, (err, val) => {
+      if (err) {
+        console.log(err.message);
+        throw createHttpError.InternalServerError(
+          'Redis error while deleting refreshToken from redis db'
+        );
+        // these error messages are for demonstration purpose
+      }
+      console.log(val);
+      res.sendStatus(204);
+      // 204 No Content
+      // no content to return but request successful
+    });
+  } catch (err) {
+    next(err);
+  }
 });
+// on the client side
+// when we logout we need to delete accessToken and
+// refreshToken
 module.exports = router;

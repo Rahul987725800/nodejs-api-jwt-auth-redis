@@ -1,5 +1,6 @@
 const JWT = require('jsonwebtoken');
 const createError = require('http-errors');
+const redisClient = require('./init_redis');
 module.exports = {
   signAccessToken: (userId) => {
     return new Promise((resolve, reject) => {
@@ -12,7 +13,7 @@ module.exports = {
       };
       const secret = process.env.ACCESS_TOKEN_SECRET;
       const options = {
-        expiresIn: '15s',
+        expiresIn: '15s', // 1h
         issuer: 'skartner.com',
         audience: userId,
       };
@@ -63,7 +64,7 @@ module.exports = {
       const payload = {};
       const secret = process.env.REFRESH_TOKEN_SECRET;
       const options = {
-        expiresIn: '1y',
+        expiresIn: '1y', // 30s
         issuer: 'skartner.com',
         audience: userId,
       };
@@ -72,7 +73,24 @@ module.exports = {
           console.log(err.message);
           return reject(createError.InternalServerError()); // 500 InternalServerError
         }
-        resolve(token);
+        // whenever we generate new refresh token
+        // we want to invalidate older refresh tokens
+        // so we store this newly generated refresh token
+        // in redis
+        redisClient.SET(
+          userId,
+          token,
+          'EX',
+          365 * 24 * 60 * 60,
+          // 30,
+          (err, reply) => {
+            if (err) {
+              console.log(err.message);
+              return reject(createError.InternalServerError()); // 500 InternalServerError
+            }
+            resolve(token);
+          }
+        );
       });
     });
   },
@@ -83,10 +101,38 @@ module.exports = {
         process.env.REFRESH_TOKEN_SECRET,
         (err, payload) => {
           if (err) {
-            return reject(createError.Unauthorized());
+            return reject(
+              createError.Unauthorized(
+                'Invalid refreshToken exited after jwt validation'
+              )
+            );
           }
           const userId = payload.aud;
-          resolve(userId);
+          // after we validated the refresh token
+          // through jwt we also need to check
+          // that this refresh token is the one
+          // set last time, so we retrieve
+          // the last saved refresh token from redis db
+          // if the refreshToken matches with token from redis
+          // we validate the token
+          redisClient.GET(userId, (err, result) => {
+            if (err) {
+              console.log(err.message);
+              return reject(
+                createError.InternalServerError(
+                  `Error while getting refreshToken against ${userId} from database`
+                )
+              );
+            }
+            if (refreshToken === result) {
+              return resolve(userId);
+            }
+            return reject(
+              createError.Unauthorized(
+                "Provided refresh token does't match with refreshToken in Redis, although validated by jwt, new refresh token must be generated"
+              )
+            );
+          });
         }
       );
     });
