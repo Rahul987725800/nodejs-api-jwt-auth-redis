@@ -1,5 +1,5 @@
 GET http://localhost:4000/
-Authorization: Bearer eyJhbGciOiIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTkzNTY2NzksImV4cCI6MTYxOTM1NjY5NCwiYXVkIjoiNjA4MmUxOGVlYmM5MGYxNDJjYTI2ZjE4IiwiaXNzIjoic2thcnRuZXIuY29tIn0.iu9UeEFeudaTgAjLmKVTa6b9PFgMRQFpKoBmRo8iP1Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTkzNTc5MjksImV4cCI6MTYxOTM1Nzk0NCwiYXVkIjoiNjA4MmUxOGVlYmM5MGYxNDJjYTI2ZjE4IiwiaXNzIjoic2thcnRuZXIuY29tIn0.rY1Ptg5rGed3QunATuvl0J1hqWFtQc6QxjkdMaCPMMc
 ###
 GET http://localhost:4000/posts
 
@@ -18,12 +18,17 @@ POST http://localhost:4000/auth/register
 Content-Type: application/json
 
 {
-  "email": "1234@gmail.com",
+  "email": "12345@gmail.com",
   "password": "123456"
 }
 
 ###
 POST http://localhost:4000/auth/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTkzNTc0MTIsImV4cCI6MTY1MDkxNTAxMiwiYXVkIjoiNjA4MmUxOGVlYmM5MGYxNDJjYTI2ZjE4IiwiaXNzIjoic2thcnRuZXIuY29tIn0.XEb9Z4tUy4ZfroQDbHfKIuqi2KPn6TQEWb7I24r7rYI"
+}
 
 ###
 DELETE  http://localhost:4000/auth/logout
